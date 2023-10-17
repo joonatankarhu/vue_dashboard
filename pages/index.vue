@@ -6,7 +6,7 @@
         <v-card-title class="headline">
           Welcome to Vue Dashboards!
         </v-card-title>
-        <v-card-text>Lorem ipsum dolor sit amet, consectetur adipisicing.</v-card-text>
+        <v-card-text>This is the landing page.</v-card-text>
         <v-text color="primary" align="center">
           {{ data }}
         </v-text>

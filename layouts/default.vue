@@ -7,10 +7,46 @@
         shaped
         app
       >
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        <v-toolbar-title>Page title</v-toolbar-title>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
     </header>
+
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      left
+      temporary
+    >
+      <v-list
+        nav
+        dense
+      >
+        <v-list-item-group
+          active-class="text--accent-4"
+        >
+        <v-list>
+          <nuxt-link class="link" to="/">
+            <v-list-item>
+              <v-list-item-title>Homepage</v-list-item-title>
+            </v-list-item>
+          </nuxt-link>
+
+          <nuxt-link class="link" to="/dashboards">
+            <v-list-item>
+              <v-list-item-title>Dashboards</v-list-item-title>
+            </v-list-item>
+          </nuxt-link>
+
+          <nuxt-link class="link" to="/settings">
+            <v-list-item>
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item>
+          </nuxt-link>
+        </v-list>
+
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
 
     <v-main>
       <v-container class="d-flex flex-row align-center">
@@ -73,5 +109,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.link {
+  text-decoration: none; /* Remove the underline */
+  color: inherit; /* Inherit the parent text color */
+}
 </style>
