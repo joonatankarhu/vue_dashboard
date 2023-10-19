@@ -57,7 +57,6 @@
    
     <v-footer
     app
-      :padless="padless"
       class="align-end"
     >
       <v-card

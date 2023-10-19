@@ -7,9 +7,9 @@
           Welcome to Vue Dashboards!
         </v-card-title>
         <v-card-text>This is the landing page.</v-card-text>
-        <v-text color="primary" align="center">
+        <p>
           {{ data }}
-        </v-text>
+        </p>
       </v-card>
       </v-flex>
     </v-layout>

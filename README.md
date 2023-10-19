@@ -2,6 +2,8 @@
 
 Interview assignment built by Joonatan Karhu
 
+Live demo: https://vue-charts-dashboard.netlify.app
+
 Technologies: Vue 2, Nuxt 2, Vuetify, VueX
 
 ## Build Setup
