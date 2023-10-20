@@ -33,7 +33,7 @@
 
           <nuxt-link class="link" to="/dashboards">
             <v-list-item>
-              <v-list-item-title>Dashboards</v-list-item-title>
+              <v-list-item-title>Dashboard</v-list-item-title>
             </v-list-item>
           </nuxt-link>
 
@@ -56,8 +56,9 @@
 
    
     <v-footer
-    app
-      class="align-end"
+      app
+      class="align-end background-white"
+      style="background-color: white;"
     >
       <v-card
         flat

@@ -1,16 +1,26 @@
 <template>
  <v-container fill-height>
     <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md6>
+      <v-flex>
         <v-card>
-        <v-card-title class="headline">
-          Welcome to Vue Dashboards!
-        </v-card-title>
-        <v-card-text>This is the landing page.</v-card-text>
-        <p>
-          {{ data }}
-        </p>
-      </v-card>
+          <v-card-title class="headline">
+            Welcome to Vue Dashboards!
+          </v-card-title>
+          <v-card-text>
+            You can see latest weather conditions by going to the
+            <span>
+              <nuxt-link to="/dashboards">
+                <v-text>Dashboard page</v-text>
+              </nuxt-link>
+            </span>
+          </v-card-text>
+          <!-- <p>
+            {{ data }}
+          </p> -->
+        </v-card>
+        <v-card>
+          
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>
