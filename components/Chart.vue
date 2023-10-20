@@ -1,4 +1,5 @@
 <template>
+  
   <v-card class="pa-5 col-12">
     <h3>{{ title }}</h3>
     <canvas :id="chartId"></canvas>
@@ -25,7 +26,8 @@
           />
         </div>
       </v-container>
-      <div class="d-flex align-center pb-5">
+     <div class="d-flex align-center justify-space-between pb-5 col-12">
+      <div class="d-flex align-center">
         <v-btn class="mr-5" @click="filterDates">
           Filter
         </v-btn>
@@ -33,6 +35,15 @@
           Reset
         </v-btn>
       </div>
+      <v-select
+        label="Chart type"
+        density="compact"
+        v-model="selectedType"
+        :items="['bar', 'line']"
+        variant="solo"
+        style="max-width: 125px;"
+      ></v-select>
+     </div>
     </div>
   </v-card>
 </template>
@@ -59,7 +70,9 @@ export default {
   data() {
     return {
       chart: {},
+      selectedType: 'bar',
       data: {
+        isEditingChartType: false,
         dates: [],
         datapoints: [],
         dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ],
@@ -126,6 +139,14 @@ export default {
       this.chart.config.data.datasets[0].data = this.data.datapoints
 
       this.chart.update()
+    },
+  },
+  watch: {
+    selectedType: {
+      handler() {
+        this.config.type = this.selectedType
+        this.chart.update()
+      }
     }
   },
   mounted() {

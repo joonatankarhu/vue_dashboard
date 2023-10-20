@@ -58,7 +58,7 @@
     <v-footer
       app
       class="align-end background-white"
-      style="background-color: white;"
+      style="background-color: white; border-top: 0.5px solid rgba(66, 66, 66, 0.6);"
     >
       <v-card
         flat
