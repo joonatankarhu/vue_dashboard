@@ -4,44 +4,52 @@
     <h3>{{ title }}</h3>
     <canvas :id="chartId"></canvas>
     <div>
-      <v-container class="d-flex align-center justify-between pt-5 pb-5">
-        <div class="d-flex align-center justify-center pr-5">
-          <span>Start:</span>
-          <input 
-            id="start"
-            type="date" 
-            :min="minDate"
-            :max="maxDate"
-            :value="minDate"
-          />
-        </div>
-        <div class="d-flex align-center justify-center">
-          <span>End:</span>
-          <input 
-            id="end"
-            type="date" 
-            :min="minDate"
-            :max="maxDate"
-            :value="minDate"
-          />
-        </div>
+      <v-container class="d-flex align-center pt-5"
+      :class="smallScreen ? 'flex-column justify-center' : 'justify-between'"
+      >
+        <v-row class="d-flex align-center justify-center"
+        :class="smallScreen ? '' : 'pr-5'"
+        >
+          <v-col class="d-flex align-center">
+            <span class="mr-1">Start:</span>
+            <input 
+              id="start"
+              type="date" 
+              :min="minDate"
+              :max="maxDate"
+              :value="minDate"
+            />
+          </v-col>
+        </v-row>
+        <v-row class="d-flex align-center justify-center">
+          <v-col class="d-flex  align-center">
+            <span class="mr-1">End:</span>
+            <input 
+              id="end"
+              type="date" 
+              :min="minDate"
+              :max="maxDate"
+              :value="minDate"
+            />
+          </v-col>
+        </v-row>
       </v-container>
-     <div class="d-flex align-center justify-space-between pb-5 col-12">
-      <div class="d-flex align-center">
+     <div class="d-flex align-center pb-5 col-12" :class="smallScreen ? 'flex-column justify-center' : 'justify-space-between'">
+      <v-row class="d-flex align-center">
         <v-btn class="mr-5" @click="filterDates">
           Filter
         </v-btn>
         <v-btn @click="resetDate">
           Reset
         </v-btn>
-      </div>
+      </v-row>
       <v-select
         label="Chart type"
         density="compact"
         v-model="selectedType"
         :items="['bar', 'line']"
         variant="solo"
-        style="max-width: 125px;"
+        :style="smallScreen ? 'padding-top: 40px' : 'max-width: 125px;'"
       ></v-select>
      </div>
     </div>
@@ -104,6 +112,9 @@ export default {
     convertedDates() {
       return this.data.dates.map((date) => new Date(date))
     },
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndUp == false
+    }
   },
   methods: {
     filterDates() {
@@ -171,3 +182,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.row + .row {
+  margin: 0px !important;
+}
+</style>

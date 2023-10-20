@@ -7,7 +7,7 @@
             Settings page!
           </v-card-title>
           <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipisicing.
+            Under maintenance
           </v-card-text>
        </v-card>
        </v-flex>

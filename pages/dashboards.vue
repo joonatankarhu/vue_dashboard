@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height>
     <v-layout class="d-flex column col-12" align-center justify-center>
-        <v-card-title class="headline text-h3">
+        <v-card-title class="headline text-h3 mb-5">
           Dashboard
         </v-card-title>
         <v-container>
@@ -9,7 +9,7 @@
             <v-col
               v-for="(chart, index) in charts"
               :key="'chart' + index"
-              :cols="$vuetify.breakpoint.smAndUp ? 6 : 12"
+              :cols="smallScreen ? 12 : 6"
               class="d-flex"
             >
               <Chart
@@ -72,6 +72,9 @@ export default {
       // Generate yyyy-mm-dd date string
       return year + "-" + month + "-" + day.slice(0, -1) + 1;
       
+    },
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndUp == false
     }
   },
   methods: {
@@ -94,7 +97,7 @@ export default {
           title: 'Temperatures',
           datapoints: this.apiData.hourly.temperature_2m,
           chartType: 'bar',
-          chartLabel: 'Hourly',
+          chartLabel: 'Temperature °C',
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           borderColor: 'rgb(54, 162, 235)',
         },
@@ -103,16 +106,16 @@ export default {
           title: 'Humidity',
           datapoints: this.apiData.hourly.relativehumidity_2m,
           chartType: 'bar',
-          chartLabel: 'Hourly',
+          chartLabel: 'Relative Humidity %',
+          backgroundColor: '#90EE90',
+          borderColor: '#90EE90',
         },
         {
           id: 'windspeed',
           title: 'Windspeed',
           datapoints: this.apiData.hourly.windspeed_10m,
           chartType: 'bar',
-          chartLabel: 'Hourly',
-          backgroundColor: 'gray',
-          borderColor: 'gray',
+          chartLabel: 'Windspeed km/h',
         },
       ]
     }

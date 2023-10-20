@@ -7,8 +7,8 @@
         shaped
         app
       >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    </v-app-bar>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      </v-app-bar>
     </header>
 
     <v-navigation-drawer
@@ -54,9 +54,7 @@
       </v-container>
     </v-main>
 
-   
     <v-footer
-      app
       class="align-end background-white"
       style="background-color: white; border-top: 0.5px solid rgba(66, 66, 66, 0.6);"
     >
