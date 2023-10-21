@@ -39,6 +39,7 @@
                 :chartId="chart.id"
                 :title="chart.title"
                 :minDate="todaysDate"
+                :defaultColor="chart.defaultColor"
                 :maxDate="maxDate"
                 :dates="apiData.hourly.time"
                 :datapoints="chart.datapoints"
@@ -126,9 +127,8 @@ export default {
           title: 'Temperatures',
           datapoints: this.apiData.hourly.temperature_2m,
           chartType: 'bar',
+          defaultColor: 'rgba(54, 162, 235, 0.2)',
           chartLabel: 'Celsius °C',
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgb(54, 162, 235)',
         },
         {
           show: this.chartIsSelected('Humidity'),
@@ -137,8 +137,7 @@ export default {
           datapoints: this.apiData.hourly.relativehumidity_2m,
           chartType: 'bar',
           chartLabel: 'Relative Humidity %',
-          backgroundColor: '#90EE90',
-          borderColor: '#90EE90',
+          defaultColor: '#90EE90'
         },
         {
           show: this.chartIsSelected('Windspeed'),
@@ -146,6 +145,7 @@ export default {
           title: 'Windspeed',
           datapoints: this.apiData.hourly.windspeed_10m,
           chartType: 'bar',
+          defaultColor: 'gray',
           chartLabel: 'km/h',
         },
         {
@@ -154,6 +154,7 @@ export default {
           title: 'Mixed Chart',
           datapoints: this.apiData.hourly.windspeed_10m,
           chartType: 'bar',
+          defaultColor: 'gray',
           chartLabel: 'Mixed',
         },
       ]
