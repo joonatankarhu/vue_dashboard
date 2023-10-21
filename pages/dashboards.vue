@@ -1,16 +1,39 @@
 <template>
-  <v-container fill-height>
-    <v-layout class="d-flex column col-12" align-center justify-center>
-        <v-card-title class="headline text-h3 mb-5">
-          Dashboard
-        </v-card-title>
+  <v-container fill-height :class="smallScreen ? 'px-0 py-8' : ''">
+    <v-layout 
+      class="d-flex column col-12" 
+      align-center 
+      justify-center
+      :class="smallScreen ? 'pa-0' : ''"
+    >
+        <v-card 
+          class="col-12 mb-10"
+          :class="smallScreen ? '' : 'pa-5'"
+        >
+          <v-card-title 
+            class="headline mb-5"
+            :class="smallScreen ? 'text-h4' : 'text-h3'"
+          >
+            Dashboard
+          </v-card-title>
+          <v-select
+            class="pl-5"
+            label="Charts"
+            v-model="selectedCharts"
+            :items="selectOptions"
+            @input="handleChartSelection"
+            multiple
+          ></v-select>
+        </v-card>
         <v-container>
           <v-row>
             <v-col
               v-for="(chart, index) in charts"
+              v-if="chart.show"
               :key="'chart' + index"
               :cols="smallScreen ? 12 : 6"
               class="d-flex"
+              :class="smallScreen ? 'px-0' : 'px-5'"
             >
               <Chart
                 :chartId="chart.id"
@@ -44,7 +67,9 @@ export default {
     return {
       loading: true,
       apiData: null,
-      charts: []
+      charts: [],
+      selectedCharts: ['Temperature', 'Humidity'],
+      selectOptions: ['Temperature', 'Humidity', 'Windspeed', 'Mixed Chart']
       // dataFetched: false,
     }
   },
@@ -52,7 +77,6 @@ export default {
     todaysDate() {
       const today = new Date();
 
-      // Get year, month, and day part from the date
       const year = today.toLocaleString("default", { year: "numeric" });
       const month = today.toLocaleString("default", { month: "2-digit" });
       const day = today.toLocaleString("default", { day: "2-digit" });
@@ -70,7 +94,8 @@ export default {
       const day = today.toLocaleString("default", { day: "2-digit" });
 
       // Generate yyyy-mm-dd date string
-      return year + "-" + month + "-" + day.slice(0, -1) + 1;
+      const maxDate = year + "-" + month + "-" + day.slice(0, -1) + 5;
+      return maxDate
       
     },
     smallScreen() {
@@ -90,18 +115,23 @@ export default {
         console.log(err);
       }
     },
+    handleChartSelection(selectedValues) {
+      this.selectedCharts = selectedValues;
+    },
     createCharts() {
       this.charts = [
         {
+          show: this.chartIsSelected('Temperature'),
           id: 'temperature',
           title: 'Temperatures',
           datapoints: this.apiData.hourly.temperature_2m,
           chartType: 'bar',
-          chartLabel: 'Temperature °C',
+          chartLabel: 'Celsius °C',
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           borderColor: 'rgb(54, 162, 235)',
         },
         {
+          show: this.chartIsSelected('Humidity'),
           id: 'humidity',
           title: 'Humidity',
           datapoints: this.apiData.hourly.relativehumidity_2m,
@@ -111,13 +141,32 @@ export default {
           borderColor: '#90EE90',
         },
         {
+          show: this.chartIsSelected('Windspeed'),
           id: 'windspeed',
           title: 'Windspeed',
           datapoints: this.apiData.hourly.windspeed_10m,
           chartType: 'bar',
-          chartLabel: 'Windspeed km/h',
+          chartLabel: 'km/h',
+        },
+        {
+          show: this.chartIsSelected('Mixed Chart'),
+          id: 'mixChart',
+          title: 'Mixed Chart',
+          datapoints: this.apiData.hourly.windspeed_10m,
+          chartType: 'bar',
+          chartLabel: 'Mixed',
         },
       ]
+    },
+    chartIsSelected(name) {
+      return this.selectedCharts.find(chart => chart == name)
+    },
+  },
+  watch: {
+    selectedCharts: {
+      handler() {
+        this.createCharts()
+      }
     }
   },
   mounted() {
@@ -125,4 +174,3 @@ export default {
   }
  }
  </script>
- 

@@ -1,6 +1,5 @@
 <template>
-  
-  <v-card class="pa-5 col-12">
+  <v-card class="col-12" :class="smallScreen ? '' : 'pa-5'">
     <h3>{{ title }}</h3>
     <canvas :id="chartId"></canvas>
     <div>
@@ -22,36 +21,41 @@
           </v-col>
         </v-row>
         <v-row class="d-flex align-center justify-center">
-          <v-col class="d-flex  align-center">
+          <v-col class="d-flex align-center justify-end">
             <span class="mr-1">End:</span>
             <input 
               id="end"
               type="date" 
               :min="minDate"
               :max="maxDate"
-              :value="minDate"
+              :value="defaultMaxDate"
             />
           </v-col>
         </v-row>
       </v-container>
-     <div class="d-flex align-center pb-5 col-12" :class="smallScreen ? 'flex-column justify-center' : 'justify-space-between'">
-      <v-row class="d-flex align-center">
-        <v-btn class="mr-5" @click="filterDates">
-          Filter
-        </v-btn>
-        <v-btn @click="resetDate">
-          Reset
-        </v-btn>
-      </v-row>
-      <v-select
-        label="Chart type"
-        density="compact"
-        v-model="selectedType"
-        :items="['bar', 'line']"
-        variant="solo"
-        :style="smallScreen ? 'padding-top: 40px' : 'max-width: 125px;'"
-      ></v-select>
-     </div>
+      <div 
+        class="d-flex align-center pb-5 col-12" :class="smallScreen ? 'flex-column justify-center' : 'justify-space-between'">
+        <v-row class="d-flex align-center">
+          <v-btn 
+            class="mr-5" 
+            @click="filterDates"
+            color="secondary"
+          >
+            Filter
+          </v-btn>
+          <v-btn @click="resetDate">
+            Reset
+          </v-btn>
+        </v-row>
+        <v-select
+          label="Chart type"
+          density="compact"
+          v-model="selectedChartType"
+          :items="['bar', 'line']"
+          variant="solo"
+          :style="smallScreen ? 'padding-top: 40px' : 'max-width: 125px;'"
+        ></v-select>
+      </div>
     </div>
   </v-card>
 </template>
@@ -59,7 +63,6 @@
 <script>
 import Chart from 'chart.js'
 import 'chartjs-adapter-date-fns';
-import format from 'date-fns/format';
 
 export default {
   name: 'Chart',
@@ -77,68 +80,103 @@ export default {
   ],
   data() {
     return {
-      chart: {},
-      selectedType: 'bar',
-      data: {
-        isEditingChartType: false,
+      chart: {
+        config: {
+          type: this.chartType,
+          data: {
+            labels: [],
+            datasets: []
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'day'
+                }
+              },
+              y: {
+                beginAtZero: true
+              }
+            }
+          },
+        },
+      },
+      selectedChartType: 'bar',
+      InitChartData: {
         dates: [],
         datapoints: [],
-        dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ],
-        days: []
-      },
-      config: {
-        type: this.chartType,
-        data: {
-          labels: [],
-          datasets: []
-        },
-        options: {
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'day'
-              }
-            },
-            y: {
-              beginAtZero: true
-            }
-          }
-        },
-      },
+      }
     }
   },
   computed: {
     convertedDates() {
-      return this.data.dates.map((date) => new Date(date))
+      return this.InitChartData.dates.map((date) => new Date(date))
+    },
+    defaultMaxDate() {
+      const today = new Date();
+
+      const year = today.toLocaleString("default", { year: "numeric" });
+      const month = today.toLocaleString("default", { month: "2-digit" });
+      const day = today.toLocaleString("default", { day: "2-digit" });
+
+      // Generate yyyy-mm-dd date string
+      const maxDate = year + "-" + month + "-" + day.slice(0, -1) + 2;
+      return maxDate
+      
     },
     smallScreen() {
       return this.$vuetify.breakpoint.smAndUp == false
+    },
+    filteredDates() {
+      const startDate = new Date(document.getElementById('start').value)
+      const endDate = new Date(document.getElementById('end').value)
+
+      return this.convertedDates.filter((date) => date >= startDate && date <= endDate)
+    },
+    filteredDatapoints() {
+      return this.InitChartData.datapoints.filter((_, index) => {
+        return index >= this.convertedDates.indexOf(this.filteredDates[0]) && index <= this.convertedDates.indexOf(this.filteredDates[this.filteredDates.length - 1]);
+      });
+    },
+    startArr() {
+      return this.convertedDates.indexOf(this.filteredDates[0])
+    },
+    endArr() {
+      return this.convertedDates.indexOf(this.filteredDates[this.filteredDates.length -1])
     }
   },
   methods: {
+    initDates() {
+       // Init chart values
+      this.chart.config.data.labels = this.filteredDates.map((date) => date.getHours())
+      
+      this.chart.config.data.datasets.push({
+        label: this.chartLabel,
+        data: this.filteredDatapoints,
+        backgroundColor: this.backgroundColor,
+        borderColor: this.borderColor,
+        borderWidth: 1
+      })
+
+      const copyDatapoints = [...this.InitChartData.datapoints]
+        copyDatapoints.splice(this.endArr + 1, this.filteredDates.length)
+        copyDatapoints.splice(0, this.startArr)
+
+      this.chart.config.data.datasets[0].data = copyDatapoints
+
+      const ctx = document.getElementById(this.chartId);
+      this.chart = new Chart(ctx, this.chart.config);
+    },  
     filterDates() {
-      const startDate = new Date(this.minDate)
-      const start = startDate.setHours(0, 0, 0, 0)
+      this.chart.config.data.labels = this.filteredDates.map((date) => date.getHours())
+      this.chart.config.data.datasets[0].data = this.filteredDatapoints;
 
-      const endDate = new Date(this.minDate)
-      const end = endDate.setHours(24, 0, 0, 0)
+      const startArr = this.convertedDates.indexOf(this.filteredDates[0])
+      const endArr = this.convertedDates.indexOf(this.filteredDates[this.filteredDates.length -1])
 
-      const filteredDates = this.convertedDates.filter(date => date >= start && date <= end)
-      const filteredDataPoints = this.data.datapoints.filter((_, index) => {
-        return index >= this.convertedDates.indexOf(filteredDates[0]) && index <= this.convertedDates.indexOf(filteredDates[filteredDates.length - 1]);
-      });
-
-      const formattedFilteredDates = filteredDates.map((date) => format(date, 'HH'))
-
-      this.chart.config.data.labels = formattedFilteredDates
-      this.chart.config.data.datasets[0].data = filteredDataPoints;
-
-      const startArr = this.convertedDates.indexOf(filteredDates[0])
-      const endArr = this.convertedDates.indexOf(filteredDates[filteredDates.length -1])
-
-      const copyDatapoints = [...this.data.datapoints]
-      copyDatapoints.splice(endArr + 1, filteredDates.length)
+      const copyDatapoints = [...this.InitChartData.datapoints]
+      copyDatapoints.splice(endArr + 1, this.filteredDates.length)
       copyDatapoints.splice(0, startArr)
 
       this.chart.config.data.datasets[0].data = copyDatapoints
@@ -147,38 +185,24 @@ export default {
     },
     resetDate() {
       this.chart.config.data.labels = this.convertedDates.map(date => new Date(date).getHours())
-      this.chart.config.data.datasets[0].data = this.data.datapoints
+      this.chart.config.data.datasets[0].data = this.InitChartData.datapoints
 
       this.chart.update()
     },
   },
   watch: {
-    selectedType: {
+    selectedChartType: {
       handler() {
-        this.config.type = this.selectedType
+        this.chart.config.type = this.selectedChartType
         this.chart.update()
       }
     }
   },
   mounted() {
-    this.data.dates = this.dates
-    this.data.datapoints = this.datapoints
+    this.InitChartData.dates = this.dates
+    this.InitChartData.datapoints = this.datapoints
 
-    // Init chart values
-    const initLabelValues = this.data.dates.map(date => new Date(date).getHours())
-    this.config.data.labels = initLabelValues
-    
-    this.config.data.datasets.push({
-      label: this.chartLabel,
-      data: this.data.datapoints.map(datapoint => datapoint),
-      backgroundColor: this.backgroundColor,
-      borderColor: this.borderColor,
-      borderWidth: 1
-    });
-
-
-    const ctx = document.getElementById(this.chartId);
-    this.chart = new Chart(ctx, this.config);
+    this.initDates()  
   }
 }
 </script>

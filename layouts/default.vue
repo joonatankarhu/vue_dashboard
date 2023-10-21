@@ -56,7 +56,7 @@
 
     <v-footer
       class="align-end background-white"
-      style="background-color: white; border-top: 0.5px solid rgba(66, 66, 66, 0.6);"
+      style="background-color: white; border-top: 0.4px solid rgba(100, 100, 100, 0.3);"
     >
       <v-card
         flat
