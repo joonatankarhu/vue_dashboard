@@ -31,11 +31,12 @@
               v-for="(chart, index) in charts"
               v-if="chart.show"
               :key="'chart' + index"
-              :cols="smallScreen ? 12 : 6"
               class="d-flex"
+              :cols="smallScreen ? 12 : 6"
               :class="smallScreen ? 'px-0' : 'px-5'"
             >
               <Chart
+                v-if="chart.id.length > 0"
                 :chartId="chart.id"
                 :title="chart.title"
                 :minDate="todaysDate"
@@ -48,6 +49,7 @@
                 :backgroundColor="chart.backgroundColor"
                 :borderColor="chart.borderColor"
               />
+              
             </v-col>
           </v-row>
         </v-container>
@@ -62,7 +64,7 @@ import axios from 'axios';
 export default {
   name: 'Dashboards',
   components: {
-    Chart
+    Chart,
   },
   data() {
     return {
@@ -127,7 +129,7 @@ export default {
           title: 'Temperatures',
           datapoints: this.apiData.hourly.temperature_2m,
           chartType: 'bar',
-          defaultColor: 'rgba(54, 162, 235, 0.2)',
+          defaultColor: '#00e0ff8f',
           chartLabel: 'Celsius °C',
         },
         {

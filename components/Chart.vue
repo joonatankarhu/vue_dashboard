@@ -31,12 +31,13 @@
         </v-row>
       </v-row>
       <v-row class="pt-5">
-        <v-col class="d-flex col-12 items-center justify-center px-10">
-          <v-btn @click="filterDates" color="primary" class="mr-5">
+        <v-col class="d-flex items-center justify-center px-10"
+        :class="smallScreen ? 'col-12' : 'col-6'">
+          <v-btn @click="filterDates" color="secondary" class="mr-5">
             Filter
           </v-btn>
           <v-btn @click="isChangingColor = true" color="primary">
-          Change Color
+          Color
             <EditColorDialog 
               :selectedColor="selectedColor"
               :isChangingColor="isChangingColor" 
@@ -45,16 +46,18 @@
             />
           </v-btn>
         </v-col>
-        <v-col class="d-flex col-12 items-center justify-center">
+        <v-col class="d-flex items-center justify-center" :class="smallScreen ? 'col-12' : 'col-3'">
           <v-select
             label="Chart type"
             density="compact"
             v-model="selectedChartType"
             :items="['bar', 'line']"
             variant="solo"
+            :style="smallScreen ? '' : 'max-width: 100px;'"
           ></v-select>
         </v-col>
-        <v-col class="d-flex col-12 items-center justify-center">
+        <v-col class="d-flex items-center justify-center"
+        :class="smallScreen ? 'col-12' : 'col-3'">
           <v-btn @click="resetDate" class="col-6">
             Reset
           </v-btn>
