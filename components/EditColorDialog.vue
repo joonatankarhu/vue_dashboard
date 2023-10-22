@@ -2,7 +2,7 @@
   <v-dialog v-model="isChangingColor" width="auto">
     <v-card class="flex-column justify-center">
       <v-color-picker 
-        v-model="localSelectedColor" 
+        v-model="colorComputed" 
         hide-inputs 
       >
       </v-color-picker>
@@ -36,8 +36,15 @@ export default {
       localSelectedColor: ''
     }
   },
-  mounted() {
-    this.localSelectedColor= this.selectedColor
+  computed: {
+    colorComputed: {
+      get() {
+        return this.selectedColor;
+      },
+      set(value) {
+        this.localSelectedColor = value
+      }
+    }
   }
 }
 </script>
