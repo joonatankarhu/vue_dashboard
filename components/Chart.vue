@@ -126,7 +126,7 @@ export default {
             const month = today.toLocaleString("default", { month: "2-digit" });
             const day = today.toLocaleString("default", { day: "2-digit" });
             // Generate yyyy-mm-dd date string
-            const maxDate = year + "-" + month + "-" + day.slice(0, -1) + 2;
+            const maxDate = year + "-" + month + "-" + day.slice(0, -1) + 3;
             return maxDate;
         },
         smallScreen() {
@@ -134,7 +134,10 @@ export default {
         },
         filteredDates() {
             const startDate = new Date(document.getElementById('start').value);
-            const endDate = new Date(document.getElementById('end').value);
+            // const endDate = new Date(document.getElementById('end').value);
+            
+            const endDate = new Date(this.defaultMaxDate)
+            console.log(this.defaultMaxDate);
             return this.convertedDates.filter((date) => date >= startDate && date <= endDate);
         },
         filteredDatapoints() {
@@ -170,6 +173,8 @@ export default {
         filterDates() {
             this.chart.config.data.labels = this.filteredDates.map((date) => date.getHours());
             this.chart.config.data.datasets[0].data = this.filteredDatapoints;
+          
+
             const startArr = this.convertedDates.indexOf(this.filteredDates[0]);
             const endArr = this.convertedDates.indexOf(this.filteredDates[this.filteredDates.length - 1]);
             const copyDatapoints = [...this.InitChartData.datapoints];

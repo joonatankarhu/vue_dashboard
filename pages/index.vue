@@ -9,9 +9,7 @@
           You can see the latest weather conditions by visiting the
           <span>
             <nuxt-link to="/dashboards">
-              <v-text class="font-weight-bold">
                 Dashboard
-              </v-text>
             </nuxt-link>
           </span>
         </v-card-text>
