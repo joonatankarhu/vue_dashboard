@@ -39,17 +39,14 @@
                 v-if="chart.id.length > 0"
                 :chartId="chart.id"
                 :title="chart.title"
-                :minDate="todaysDate"
                 :defaultColor="chart.defaultColor"
-                :maxDate="maxDate"
+                :smallScreen="smallScreen"
                 :dates="apiData.hourly.time"
                 :datapoints="chart.datapoints"
-                :chartType="chart.chartType"
                 :chartLabel="chart.chartLabel"
                 :backgroundColor="chart.backgroundColor"
                 :borderColor="chart.borderColor"
               />
-              
             </v-col>
           </v-row>
         </v-container>
@@ -77,30 +74,6 @@ export default {
     }
   },
   computed: {
-    todaysDate() {
-      const today = new Date();
-
-      const year = today.toLocaleString("default", { year: "numeric" });
-      const month = today.toLocaleString("default", { month: "2-digit" });
-      const day = today.toLocaleString("default", { day: "2-digit" });
-
-      // Generate yyyy-mm-dd date string
-      const formattedDate = year + "-" + month + "-" + day;
-
-      return formattedDate
-    },
-    maxDate() {
-      const today = new Date();
-
-      const year = today.toLocaleString("default", { year: "numeric" });
-      const month = today.toLocaleString("default", { month: "2-digit" });
-      const day = today.toLocaleString("default", { day: "2-digit" });
-
-      // Generate yyyy-mm-dd date string
-      const maxDate = year + "-" + month + "-" + day.slice(0, -1) + 5;
-      return maxDate
-      
-    },
     smallScreen() {
       return this.$vuetify.breakpoint.smAndUp == false
     }
@@ -128,7 +101,6 @@ export default {
           id: 'temperature',
           title: 'Temperatures',
           datapoints: this.apiData.hourly.temperature_2m,
-          chartType: 'bar',
           defaultColor: '#00e0ff8f',
           chartLabel: 'Celsius °C',
         },
@@ -137,7 +109,6 @@ export default {
           id: 'humidity',
           title: 'Humidity',
           datapoints: this.apiData.hourly.relativehumidity_2m,
-          chartType: 'bar',
           chartLabel: 'Relative Humidity %',
           defaultColor: '#90EE90'
         },
@@ -146,7 +117,6 @@ export default {
           id: 'windspeed',
           title: 'Windspeed',
           datapoints: this.apiData.hourly.windspeed_10m,
-          chartType: 'bar',
           defaultColor: 'gray',
           chartLabel: 'km/h',
         },
@@ -155,7 +125,6 @@ export default {
           id: 'mixChart',
           title: 'Mixed Chart',
           datapoints: this.apiData.hourly.windspeed_10m,
-          chartType: 'bar',
           defaultColor: 'gray',
           chartLabel: 'Mixed',
         },
