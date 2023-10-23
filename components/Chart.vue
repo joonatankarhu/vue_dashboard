@@ -3,24 +3,28 @@
     <h3>{{ title }}</h3>
     <canvas :id="chartId"></canvas>
     <div class="flex-column pa-10">
-      <v-row class="flex-column justify-center align-center col-12">
-        <span class="mr-2">Start:</span>
-        <input 
-          id="start"
-          type="date" 
-          :min="todaysDate"
-          :max="maxDate"
-          :value="todaysDate"
-        />
-        <span>End:</span>
-        <input 
-          id="end"
-          type="date" 
-          :min="todaysDate"
-          :max="maxDate"
-          :value="maxDate"
-        />
-      </v-row>
+      <div class="d-flex justify-between align-center col-12">
+        <span class="mr-5">
+          <span>Start:</span>
+          <input 
+            id="start"
+            type="date" 
+            :min="todaysDate"
+            :max="maxDate"
+            :value="startValue"
+          />
+        </span>
+        <span>
+          <span>End:</span>
+          <input 
+            id="end"
+            type="date" 
+            :min="todaysDate"
+            :max="maxDate"
+            :value="endValue"
+          />
+          </span>
+      </div>
       <v-row class="pt-5">
         <v-col class="d-flex items-center justify-center px-10"
         :class="smallScreen ? 'col-12' : 'col-6'">
@@ -106,7 +110,9 @@ export default {
             dates: this.dates,
             datapoints: this.datapoints,
         },
-        dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        startValue: '',
+        endValue: ''
       };
     },
     computed: {
@@ -114,55 +120,56 @@ export default {
         return this.InitChartData.dates.map((date) => new Date(date).setHours(0, 0, 0, 0));
       },
       filteredDates() {
-        const startDate = new Date(document.getElementById('start').value);
+        const startDate = new Date(this.startValue);
         const start = startDate.setHours(0, 0, 0, 0)
 
-        const endDate = new Date(document.getElementById('end').value);
+        const endDate = new Date(this.endValue);
         const end = endDate.setHours(0, 0, 0, 0)
         
         const filteredDates = this.convertedDates.filter(date => date >= start && date <= end)
 
+        this.startValue = this.todaysDate
+        this.endValue = this.todaysDate
 
         return filteredDates
       },
-      filteredDatapoints() {
-        const startArr = this.convertedDates.indexOf(this.filteredDates[0])
-        const endArr = this.convertedDates.indexOf(this.filteredDates[this.filteredDates.length -1])
-
-        const copyDatapoints = [...this.InitChartData.datapoints]
-        copyDatapoints.splice(endArr + 1, this.filteredDates.length)
-        copyDatapoints.splice(0, startArr)
-
-        return copyDatapoints
-      },
       todaysDate() {
         const today = new Date();
-        today.setDate(today.getDate()); // Add 5 days to the current date
+        today.setDate(today.getDate());
 
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
-        const day = String(today.getDate()).padStart(2, '0'); // Ensure 2-digit day
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
 
         return `${year}-${month}-${day}`;
       },
       maxDate() {
         const today = new Date();
-        today.setDate(today.getDate() + 3); // Add 5 days to the current date
+        today.setDate(today.getDate() + 3);
 
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
-        const day = String(today.getDate()).padStart(2, '0'); // Ensure 2-digit day
+        const month = String(today.getMonth() + 1).padStart(2, '0');month
+        const day = String(today.getDate()).padStart(2, '0');
 
         return `${year}-${month}-${day}`;
+      },
+      datesAreSame() {
+        console.log(' this.endValue', this.endValue);
+        console.log(' this.todaysDate', this.todaysDate);
+
+        return this.endValue == this.todaysDate
       }
     },
     methods: {
-      formattedDays(list) {
-        return list.map((date, i) => {
-          const day = new Date(date).getDay()
-          const name = this.dayNames[day]
-
-          return name
+      formattedDays(dates) {
+        return dates.map((date, index) => {
+          if (this.datesAreSame) {
+            return index
+          } else {
+            const day = new Date(date).getDay()
+            const dayName = this.dayNames[day]
+            return dayName
+          }
         })
       },
       initChartValues() {
@@ -189,12 +196,31 @@ export default {
         this.chart = new Chart(ctx, this.chart.config);
       },
       filterDates() {
-        this.chart.config.data.labels = this.formattedDays(this.filteredDates)
-        this.chart.config.data.datasets[0].data = this.filteredDatapoints
+        const startDate = new Date(this.startValue);
+        const start = startDate.setHours(0, 0, 0, 0)
+
+        const endDate = new Date(this.endValue);
+        const end = endDate.setHours(0, 0, 0, 0)
+        
+        const filteredDates = this.convertedDates.filter(date => date >= start && date <= end)
+
+        this.chart.config.data.labels = filteredDates
+
+
+        const startArr = this.convertedDates.indexOf(this.filteredDates[0])
+        const endArr = this.convertedDates.indexOf(this.filteredDates[this.filteredDates.length -1])
+
+        const copyDatapoints = [...this.InitChartData.datapoints]
+        copyDatapoints.splice(endArr + 1, this.filteredDates.length)
+        copyDatapoints.splice(0, startArr)
+
+        this.chart.config.data.datasets[0].data = copyDatapoints
 
         this.chart.update()
+
       },
       resetDate() {
+        this.endValue = this.maxDate
         this.chart.config.data.labels = this.formattedDays(this.convertedDates)
         this.chart.config.data.datasets[0].data = this.InitChartData.datapoints
 
@@ -221,6 +247,8 @@ export default {
       },
     },
     mounted() {
+      this.startValue = this.todaysDate
+      this.endValue = this.todaysDate
       this.initChartValues();
     }
 }

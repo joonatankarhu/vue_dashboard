@@ -3,7 +3,7 @@
     <v-layout align-center justify-center>
       <v-card style="max-width: 750px;">
         <v-card-title class="headline">
-          Welcome to Weather Dashboards!
+          Weather Dashboards!
         </v-card-title>
         <v-card-text>
           You can see the latest weather conditions by visiting the
